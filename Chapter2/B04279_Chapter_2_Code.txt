@@ -1,0 +1,160 @@
+==== Interface configurations ====
+
+# ifcfg-enp0s3
+
+TYPE=Ethernet
+BOOTPROTO=none
+DEFROUTE=no
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+NAME=enp0s3
+DEVICE=enp0s3
+ONBOOT=yes
+IPADDR=10.254.254.100
+PREFIX=24
+
+# ifcfg-enp0s9
+
+TYPE=Ethernet
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+NAME=enp0s9
+DEVICE=enp0s9
+ONBOOT=yes 
+
+# Enabling interfaces
+
+sudo ifdown enp0s3; sudo ifdown enp0s9; 
+sudo ifup enp0s3; sudo ifup enp0s9;
+
+==== Prerequisites ====
+
+# Installing network utilities
+
+sudo yum install wget curl tcpdump
+
+# Setting hostname 
+
+sudo hostnamectl set-hostname allinone.learningneutron.com
+
+# Network Time Protocol
+
+sudo yum install ntp
+
+# Disabling network manager
+
+sudo systemctl stop NetworkManager.service
+sudo systemctl disable NetworkManager.service
+
+# Upgrading system
+
+sudo yum upgrade
+sudo reboot
+
+==== Installing Packstack ====
+
+sudo yum update
+sudo yum install http://rdo.fedorapeople.org/rdo-release.rpm
+sudo yum install openstack-packstack
+
+==== Answers File ====
+
+[general]
+
+# Generic config options
+CONFIG_UNSUPPORTED=n
+CONFIG_DEBUG_MODE=n
+CONFIG_PROVISION_DEMO=n
+
+# Default password to be used everywhere 
+CONFIG_DEFAULT_PASSWORD=openstack
+
+#Install the following services
+CONFIG_MARIADB_INSTALL=y
+CONFIG_GLANCE_INSTALL=y
+CONFIG_NOVA_INSTALL=y
+CONFIG_NEUTRON_INSTALL=y
+CONFIG_HORIZON_INSTALL=y
+CONFIG_CLIENT_INSTALL=y
+
+# Configure networking
+EXCLUDE_SERVERS=
+CONFIG_NTP_SERVERS=
+CONFIG_CONTROLLER_HOST=10.254.254.100
+CONFIG_COMPUTE_HOSTS=10.254.254.100
+CONFIG_NETWORK_HOSTS=10.254.254.100
+CONFIG_MARIADB_HOST=10.254.254.100
+CONFIG_AMQP_HOST=10.254.254.100
+CONFIG_STORAGE_HOST=10.254.254.100
+CONFIG_SAHARA_HOST=10.254.254.100
+CONFIG_KEYSTONE_LDAP_URL=ldap://10.254.254.100
+CONFIG_MONGODB_HOST=10.254.254.100
+CONFIG_REDIS_MASTER_HOST=10.254.254.100
+
+# Configure Neutron
+CONFIG_NEUTRON_L3_EXT_BRIDGE=provider
+CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS=openvswitch
+CONFIG_NEUTRON_ML2_VLAN_RANGES=
+CONFIG_NEUTRON_L2_AGENT=openvswitch
+CONFIG_NEUTRON_ML2_TYPE_DRIVERS=vxlan,flat
+CONFIG_NEUTRON_ML2_FLAT_NETWORKS=*
+CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-ex
+CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:enp0s8
+
+#Do not install the following services
+CONFIG_CINDER_INSTALL=n
+CONFIG_MANILA_INSTALL=n
+CONFIG_SWIFT_INSTALL=n
+CONFIG_CEILOMETER_INSTALL=n
+CONFIG_HEAT_INSTALL=n
+CONFIG_SAHARA_INSTALL=n
+CONFIG_TROVE_INSTALL=n
+CONFIG_IRONIC_INSTALL=n
+CONFIG_NAGIOS_INSTALL=n
+CONFIG_VMWARE_BACKEND=n
+
+==== Installing RDO ====
+
+sudo packstack --answer-file=answers.cfg
+
+==== Verifying connectivity ====
+
+$ sudo su
+# source ~/keystonerc_admin
+# openstack user list
+
+==== Creating security group ====
+
+neutron security-group-rule-create default --protocol tcp --port-range-min 22 --port-range-max 22
+
+==== Creating DEMO project ====
+
+openstack project create demo
+openstack user create demo --password openstack
+openstack role add --project demo --user demo _member_
+
+==== Configuring DEMO keystone rc file ====
+
+# vi ~/keystonerc_demo
+
+unset OS_SERVICE_TOKEN
+export OS_USERNAME=demo
+export OS_PASSWORD=openstack
+export PS1='[\u@\h \W(keystone_demo)]\$ '
+export OS_AUTH_URL=http://10.254.254.100:5000/v2.0
+export OS_TENANT_NAME=demo
+export OS_IDENTITY_API_VERSION=2.0
+
+==== Uploading CirrOS image ====
+
+# wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -P /var/tmp
+
+# source ~/keystone_admin
+# glance image-create --name "cirros-0.3.4-x86_64" \
+  --file /var/tmp/cirros-0.3.4-x86_64-disk.img \
+  --disk-format qcow2 --container-format bare \
+  --visibility public --progress
+
+

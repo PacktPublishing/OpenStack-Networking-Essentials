@@ -1,0 +1,19 @@
+==== Configuring Provider Network ====
+
+neutron net-create --provider:network_type=flat \
+--provider:physical_network=physnet1 MyExternalProviderNetwork
+
+neutron subnet-create MyExternalProviderNetwork 10.50.0.0/24 \
+--name MyExternalProviderSubnet --gateway_ip=10.50.0.1
+
+
+==== Booting an instance ====
+
+nova boot --image "cirros-0.3.4-x86_64" --flavor="m1.tiny" \
+--nic net-id=<networkid> MyDirectInstance
+
+
+
+==== Updating the external network ====
+
+neutron net-update MyExternalProviderNetwork --router:external=true
