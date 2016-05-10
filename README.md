@@ -42,7 +42,7 @@ sudo ifup enp0s3; sudo ifup enp0s9;
 ```
 
 
-##Related Entity Framework Products:
+##Related OpenStack Products:
 * [OpenStack Cloud Computing Cookbook](https://www.packtpub.com/virtualization-and-cloud/openstack-cloud-computing-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781849517324)
 * [OpenStack Cloud Computing Cookbook - Second Edition](https://www.packtpub.com/virtualization-and-cloud/openstack-cloud-computing-cookbook-second-edition?utm_source=github&utm_medium=repository&utm_campaign=9781782167587)
 * [OpenStack Cloud Computing Cookbook - Third Edition](https://www.packtpub.com/virtualization-and-cloud/openstack-cloud-computing-cookbook-third-edition?utm_source=github&utm_medium=repository&utm_campaign=9781782174783)
