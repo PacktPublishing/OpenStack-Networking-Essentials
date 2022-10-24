@@ -51,3 +51,7 @@ sudo ifup enp0s3; sudo ifup enp0s9;
 * [Learning OpenStack Networking (Neutron) - Second Edition](https://www.packtpub.com/virtualization-and-cloud/learning-openstack-networking-neutron-second-edition?utm_source=github&utm_medium=repository&utm_campaign=9781785287725)
 * [OpenStack Networking Cookbook](https://www.packtpub.com/virtualization-and-cloud/openstack-networking-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781785286100) 
 * [Learning OpenStack High Availability](https://www.packtpub.com/virtualization-and-cloud/learning-openstack-high-availability?utm_source=github&utm_medium=repository&utm_campaign=9781784395704)
+### Download a free PDF
+
+ <i>If you have already purchased a print or Kindle version of this book, you can get a DRM-free PDF version at no cost.<br>Simply click on the link to claim your free PDF.</i>
+<p align="center"> <a href="https://packt.link/free-ebook/9781785283277">https://packt.link/free-ebook/9781785283277 </a> </p>
